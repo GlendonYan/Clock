@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three Clocks</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            width: 80%;
+        }
+        .clock-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .clock {
+            width: 200px;
+            height: 200px;
+            border: 10px solid black;
+            border-radius: 50%;
+            position: relative;
+            background: white;
+        }
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom;
+            background: black;
+        }
+        .hour {
+            width: 6px;
+            height: 50px;
+        }
+        .minute {
+            width: 4px;
+            height: 70px;
+        }
+        .second {
+            width: 2px;
+            height: 80px;
+            background: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="clock-container">
+            <h3>Clock</h3>
+            <div class="clock" id="mainClock">
+                <div class="hand hour" id="hour"></div>
+                <div class="hand minute" id="minute"></div>
+                <div class="hand second" id="second"></div>
+            </div>
+        </div>
+        
+        <div class="clock-container">
+            <h3>Stopwatch</h3>
+            <div class="clock" id="stopwatchClock">
+                <div class="hand hour" id="stopwatchHour"></div>
+                <div class="hand minute" id="stopwatchMinute"></div>
+                <div class="hand second" id="stopwatchSecond"></div>
+            </div>
+            <button onclick="startStopwatch()">Start Stopwatch</button>
+            <button onclick="stopStopwatch()">Stop Stopwatch</button>
+        </div>
+        
+        <div class="clock-container">
+            <h3>Timer</h3>
+            <div class="clock" id="timerClock">
+                <div class="hand hour" id="timerHour"></div>
+                <div class="hand minute" id="timerMinute"></div>
+                <div class="hand second" id="timerSecond"></div>
+            </div>
+            <input type="number" id="timerInput" placeholder="Enter seconds">
+            <button onclick="startTimer()">Start Timer</button>
+        </div>
+    </div>
+    
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours() % 12;
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+
+            document.getElementById('hour').style.transform = `rotate(${(hours * 30) + (minutes / 2)}deg)`;
+            document.getElementById('minute').style.transform = `rotate(${minutes * 6}deg)`;
+            document.getElementById('second').style.transform = `rotate(${seconds * 6}deg)`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        let stopwatchTime = 0, stopwatchInterval;
+        function startStopwatch() {
+            stopwatchTime = 0;
+            stopwatchInterval = setInterval(() => {
+                stopwatchTime++;
+                document.getElementById('stopwatchSecond').style.transform = `rotate(${(stopwatchTime % 60) * 6}deg)`;
+                document.getElementById('stopwatchMinute').style.transform = `rotate(${(stopwatchTime / 60) * 6}deg)`;
+            }, 1000);
+        }
+        function stopStopwatch() {
+            clearInterval(stopwatchInterval);
+            alert(`Stopwatch stopped at ${stopwatchTime} seconds`);
+            document.getElementById('stopwatchSecond').style.transform = 'rotate(0deg)';
+            document.getElementById('stopwatchMinute').style.transform = 'rotate(0deg)';
+        }
+        
+        let timerTime = 0, timerInterval;
+        function startTimer() {
+            timerTime = parseInt(document.getElementById("timerInput").value) || 0;
+            if (timerTime > 0) {
+                let timeLeft = timerTime;
+                document.getElementById('timerSecond').style.transform = `rotate(${timeLeft * 6}deg)`;
+                timerInterval = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        document.getElementById('timerSecond').style.transform = `rotate(${timeLeft * 6}deg)`;
+                    } else {
+                        clearInterval(timerInterval);
+                        alert("Time's up!!!");
+                    }
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>
